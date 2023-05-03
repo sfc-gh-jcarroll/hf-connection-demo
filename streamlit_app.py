@@ -12,24 +12,26 @@ It's not doing anything super interesting since all of this can
 be found easily on the HF Hub, but demonstrates how easy it is to set up.
 """
 
-conn = st.experimental_connection('hf', type=FilesConnection)
+with st.echo("below"):
+    conn = st.experimental_connection('hf', type=FilesConnection)
 
-# Enter a dataset and retrieve a list of data files
-dataset_name = st.text_input(
-    "Enter your dataset of interest",
-    value="EleutherAI/lambada_openai"
-    )
-dataset = f'datasets/{dataset_name}'
-file_options = [f['name'] for f in conn.fs.ls(f"{dataset}/data")]
+    # Enter a dataset and retrieve a list of data files
+    dataset_name = st.text_input(
+        "Enter your dataset of interest",
+        value="EleutherAI/lambada_openai"
+        )
+    dataset = f'datasets/{dataset_name}'
+    file_options = [f['name'] for f in conn.fs.ls(f"{dataset}/data")]
 
-datafile_selection = st.selectbox("Pick a data file", file_options)
+    datafile_selection = st.selectbox("Pick a data file", file_options)
+    nrows = st.slider("Rows to retrieve", value=50)
 
-# View the first few rows
-@st.cache_data
-def retrieve_data(selection):
-    with conn.open(datafile_selection) as f:
-        return pd.read_json(f, lines=True, nrows=50)
-    
-
-df = retrieve_data(datafile_selection)
-st.dataframe(df)
+    # View the first few rows
+    @st.cache_data(ttl=3600)
+    def retrieve_data(selection, nrows):
+        with conn.open(selection) as f:
+            return pd.read_json(f, lines=True, nrows=nrows)
+        
+    "## Dataset Preview"
+    df = retrieve_data(datafile_selection, nrows)
+    st.dataframe(df)
