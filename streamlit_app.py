@@ -30,6 +30,8 @@ with st.echo("below"):
     nrows = st.slider("Rows to retrieve", value=50)
 
     # View the first few rows
+    # TODO: add native json support to FilesConnection.read()
+    # so this can be simplified to a one liner
     @st.cache_data(ttl=3600)
     def retrieve_data(selection, nrows):
         with conn.open(selection) as f:
