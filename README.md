@@ -2,7 +2,7 @@
 
 A little MVP demo of connecting a Streamlit app to HuggingFace data using FilesConnection and HfFileSystem.
 
-**Deployed app: https://hf-connection-demo.streamlit.app**
+**Deployed app: https://hf-connection.streamlit.app**
 
 Relevant references:
 
