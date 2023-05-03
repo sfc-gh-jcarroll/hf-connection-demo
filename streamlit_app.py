@@ -10,6 +10,9 @@ with HfFileSystem to access HF DataSet data from Streamlit.
 
 It's not doing anything super interesting since all of this can
 be found easily on the HF Hub, but demonstrates how easy it is to set up.
+
+There's probably some cool stuff to do with
+[data editor](https://data-editor.streamlit.app/) here too!
 """
 
 with st.echo("below"):
@@ -34,4 +37,4 @@ with st.echo("below"):
         
     "## Dataset Preview"
     df = retrieve_data(datafile_selection, nrows)
-    st.dataframe(df)
+    st.dataframe(df, use_container_width=True)
