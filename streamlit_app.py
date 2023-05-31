@@ -1,3 +1,4 @@
+from json import JSONDecodeError
 import streamlit as st
 from st_files_connection import FilesConnection
 from pathlib import Path
@@ -61,12 +62,16 @@ kwargs = dict(nrows=nrows, ttl=3600)
 # parquet doesn't neatly support nrows
 # could be fixed with something like this:
 # https://stackoverflow.com/a/69888274/20530083
-if datafile.suffix == '.parquet':
+if datafile.suffix in ('.parquet', '.json'):
     del(kwargs['nrows'])
 
-# More often than not people get the extension wrong
-if datafile.suffix == '.json':
-    kwargs['lines'] = True
+try:
+    df = conn.read(datafile, **kwargs)
+except JSONDecodeError as e:
+    # often times because a .json file is really .jsonl
+    try:
+        df = conn.read(datafile, input_format='jsonl', nrows=nrows, **kwargs)
+    except:
+        raise e
 
-df = conn.read(datafile, **kwargs)
 st.dataframe(df.head(nrows), use_container_width=True)
